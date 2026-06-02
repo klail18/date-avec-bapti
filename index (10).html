@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(145deg, #fff5f7, #fef0f5);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .petal {
+    position: fixed; top: -60px; pointer-events: none; z-index: 0;
+    animation: petalFall linear infinite; user-select: none;
+  }
+  @keyframes petalFall {
+    0%   { transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    8%   { opacity:1; }
+    92%  { opacity:.7; }
+    100% { transform:translateY(110vh) translateX(35px) rotate(680deg); opacity:0; }
+  }
+
+  #app {
+    position:relative; z-index:1; width:100%;
+    display:flex; justify-content:center; padding:20px;
+  }
+
+  .card {
+    background:rgba(255,255,255,0.97); border-radius:28px;
+    padding:44px 38px 40px; max-width:460px; width:100%;
+    text-align:center;
+    box-shadow:0 4px 6px rgba(220,80,120,.04),0 16px 48px rgba(220,80,120,.12),0 0 0 1px rgba(249,160,184,.18);
+    animation:cardIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes cardIn {
+    from { opacity:0; transform:scale(.88) translateY(16px); }
+    to   { opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  .mascot {
+    font-size:82px; display:block; margin-bottom:14px;
+    animation:float 3s ease-in-out infinite;
+    filter:drop-shadow(0 6px 12px rgba(200,80,120,.18));
+  }
+  @keyframes float {
+    0%,100% { transform:translateY(0); }
+    50%     { transform:translateY(-9px); }
+  }
+
+  h1 { font-family:'Fraunces',serif; color:#6d1529; font-size:1.8rem; line-height:1.25; margin-bottom:10px; }
+  .sub { color:#b06080; font-size:.92rem; font-weight:700; margin-bottom:22px; line-height:1.5; }
+
+  /* Step 0 */
+  .ask-row { display:flex; justify-content:center; align-items:center; margin-top:26px; min-height:64px; gap:14px; }
+  .btn-yes {
+    background:linear-gradient(135deg,#f9a0b8,#f07090);
+    color:white; border:none; border-radius:50px;
+    padding:15px 38px; font-size:1.1rem; font-weight:800;
+    font-family:'Nunito',sans-serif; cursor:pointer;
+    box-shadow:0 8px 24px rgba(240,112,144,.42);
+    transition:transform .2s, box-shadow .2s; flex-shrink:0;
+  }
+  .btn-yes:hover { transform:scale(1.07) translateY(-2px); }
+  .btn-yes:active { transform:scale(.97); }
+  .no-placeholder { width:110px; height:46px; flex-shrink:0; }
+
+  #btn-no {
+    background:rgba(220,200,235,.80); color:#8a6a9a; border:none; border-radius:50px;
+    padding:13px 22px; font-size:.95rem; font-weight:700;
+    font-family:'Nunito',sans-serif; cursor:pointer; position:fixed;
+    transition:left .38s cubic-bezier(.47,1.64,.41,.8), top .38s cubic-bezier(.47,1.64,.41,.8);
+    white-space:nowrap; z-index:999; touch-action:none;
+  }
+  #btn-no:hover { background:rgba(200,175,220,.9); }
+
+  /* Bouton principal */
+  .btn-main {
+    background:linear-gradient(135deg,#f9a0b8,#f07090);
+    color:white; border:none; border-radius:50px;
+    padding:15px 0; width:100%; font-size:1.05rem; font-weight:800;
+    font-family:'Nunito',sans-serif; cursor:pointer;
+    box-shadow:0 8px 24px rgba(240,112,144,.38);
+    margin-top:22px; transition:transform .2s, box-shadow .2s;
+  }
+  .btn-main:hover:not(:disabled) { transform:translateY(-3px); box-shadow:0 12px 30px rgba(240,112,144,.48); }
+  .btn-main:disabled { opacity:.42; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  /* Formulaire */
+  .form-area { margin-top:22px; text-align:left; }
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-weight:800; color:#6d1529; font-size:.82rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+  .field input, .field select {
+    width:100%; padding:13px 16px; border:2px solid #ffd0e4; border-radius:14px;
+    font-family:'Nunito',sans-serif; font-size:.95rem; color:#5a1a2e;
+    outline:none; background:#fff8fa; transition:border-color .2s, box-shadow .2s;
+  }
+  .field input:focus, .field select:focus { border-color:#f9a0b8; box-shadow:0 0 0 3px rgba(249,160,184,.22); background:white; }
+
+  /* Food grid */
+  .food-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:20px; }
+  .food-item {
+    background:#fff0f5; border:2.5px solid transparent; border-radius:18px;
+    padding:16px 8px 12px; cursor:pointer;
+    transition:all .22s cubic-bezier(.34,1.56,.64,1);
+    display:flex; flex-direction:column; align-items:center; gap:7px; user-select:none;
+  }
+  .food-item:hover { border-color:#f9a0b8; transform:scale(1.06) translateY(-2px); box-shadow:0 6px 16px rgba(249,160,184,.25); }
+  .food-item.selected { border-color:#f07090; background:#ffe0ec; transform:scale(1.06) translateY(-2px); box-shadow:0 6px 18px rgba(240,112,144,.3); }
+  .food-item span:first-child { font-size:38px; line-height:1; }
+  .food-item span:last-child { font-size:.75rem; font-weight:800; color:#6d1529; text-transform:uppercase; letter-spacing:.04em; }
+
+  /* Final */
+  .avatar { width:78px; height:78px; border-radius:50%; background:linear-gradient(135deg,#f9a0b8,#f07090); display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 18px; box-shadow:0 8px 22px rgba(240,112,144,.32); }
+  .final-main { font-family:'Fraunces',serif; font-size:1.5rem; color:#6d1529; line-height:1.4; margin-bottom:10px; }
+  .final-food { color:#b06080; font-weight:700; font-size:.93rem; margin-bottom:6px; }
+
+  .suggest-label { font-size:.75rem; font-weight:800; color:#6d1529; text-transform:uppercase; letter-spacing:.07em; margin:20px 0 10px; display:block; opacity:.7; }
+  .suggest-list { display:flex; flex-direction:column; gap:8px; }
+  .suggest-item { background:#fff5f8; border:1.5px solid #ffd6e6; border-radius:14px; padding:11px 14px; text-align:left; display:flex; align-items:center; gap:12px; transition:border-color .2s, box-shadow .2s; }
+  .suggest-item:hover { border-color:#f9a0b8; box-shadow:0 4px 12px rgba(249,160,184,.2); }
+  .suggest-icon { font-size:24px; flex-shrink:0; }
+  .suggest-info { flex:1; min-width:0; }
+  .suggest-name { font-weight:800; color:#6d1529; font-size:.88rem; }
+  .suggest-desc { color:#b06080; font-size:.78rem; margin-top:1px; }
+  .suggest-addr { color:#c8a0b0; font-size:.72rem; margin-top:2px; }
+
+  .final-ps { font-style:italic; color:#c090a8; font-size:.8rem; margin-top:20px; line-height:1.6; }
+  .hearts { margin-top:18px; font-size:1.5rem; letter-spacing:6px; }
+
+  /* Écran triste */
+  .sad-emoji { font-size:90px; display:block; margin-bottom:14px; animation:sadBounce 2s ease-in-out infinite; }
+  @keyframes sadBounce {
+    0%,100% { transform:translateY(0) rotate(-3deg); }
+    50%     { transform:translateY(-6px) rotate(3deg); }
+  }
+  .btn-yes-small { background:linear-gradient(135deg,#f9a0b8,#f07090); color:white; border:none; border-radius:50px; padding:12px 30px; font-size:.95rem; font-weight:800; font-family:'Nunito',sans-serif; cursor:pointer; box-shadow:0 6px 18px rgba(240,112,144,.38); margin-top:22px; display:inline-block; transition:transform .2s; }
+  .btn-yes-small:hover { transform:scale(1.06) translateY(-2px); }
+
+
+
+  /* ── TICKET ── */
+  .ticket {
+    background: white;
+    border: 2.5px dashed #f9a0b8;
+    border-radius: 18px;
+    margin-top: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticket-header {
+    background: linear-gradient(135deg,#f9a0b8,#f07090);
+    padding: 12px 18px 10px;
+    text-align: center;
+  }
+  .ticket-header span {
+    font-family:'Fraunces',serif;
+    color:white; font-size:1rem;
+    letter-spacing:.08em; text-transform:uppercase;
+  }
+  .ticket-body { padding: 16px 18px 14px; }
+  .ticket-row {
+    display:flex; justify-content:space-between;
+    align-items:baseline; margin-bottom:8px;
+  }
+  .ticket-label {
+    font-size:.7rem; font-weight:800; color:#c090a8;
+    text-transform:uppercase; letter-spacing:.07em; flex-shrink:0;
+  }
+  .ticket-value {
+    font-size:.88rem; font-weight:800; color:#6d1529;
+    text-align:right; margin-left:10px;
+  }
+  .ticket-divider {
+    border:none; border-top: 1.5px dashed #ffd0e4;
+    margin: 10px 0;
+  }
+  .ticket-footer {
+    background:#fff5f8; padding:9px 18px;
+    font-size:.72rem; color:#b06080;
+    text-align:center; font-style:italic;
+    line-height:1.5;
+  }
+  /* encoches latérales */
+  .ticket::before, .ticket::after {
+    content:""; position:absolute;
+    width:18px; height:18px; border-radius:50%;
+    background:linear-gradient(145deg,#fff5f7,#fef0f5);
+    top:50%; transform:translateY(-50%);
+    border:2.5px dashed #f9a0b8;
+  }
+  .ticket::before { left:-10px; }
+  .ticket::after  { right:-10px; }
+
+
+
+
+  .btn-sms {
+    background: linear-gradient(135deg, #a8e6cf, #56c596);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 13px 0;
+    width: 100%;
+    font-size: .92rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all .2s;
+    box-shadow: 0 6px 18px rgba(86,197,150,.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .btn-sms:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(86,197,150,.4); }
+
+  /* Bouton retour */
+  .btn-back {
+    background: none; border: none;
+    color: #c8a0b8; font-size: .82rem; font-weight: 700;
+    font-family: 'Nunito', sans-serif; cursor: pointer;
+    margin-top: 14px; display: block; width: 100%;
+    text-align: center; padding: 6px;
+    transition: color .2s;
+    letter-spacing: .02em;
+  }
+  .btn-back:hover { color: #f07090; }
+
+  /* Dots */
+  .dots { display:flex; justify-content:center; gap:7px; margin-top:22px; }
+  .dot { width:7px; height:7px; border-radius:50%; background:#ffd0e4; transition:all .3s; }
+  .dot.on { background:#f07090; transform:scale(1.35); }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const TON_PRENOM = "Baptiste Perrot"; // ✏️ ton prénom + nom
+const SON_PRENOM  = "Léa";              // ✏️ son prénom
+const SA_PHOTO    = "";              // ✏️ URL photo
+
+const SUGGESTIONS = {
+  "Italien": [
+    { icon:"🇮🇹", name:"Chez Tino",            desc:"napolitain feu de bois, la pâte sort en 90 secondes mais on reste bien plus longtemps",            addr:"Centre Dijon" },
+    { icon:"🪵", name:"Marco Polo",             desc:"grande terrasse face au Parvis Saint-Jean, parfait pour s'oublier un peu",                        addr:"Face au Parvis Saint-Jean" },
+    { icon:"✨", name:"CIBO",                   desc:"gastronomique italien, 4.9/5 et +580 avis, à toi de voir le niveau que tu veux mettre",            addr:"Centre Dijon" },
+  ],
+  "Sushi": [
+    { icon:"🏆", name:"Masami",                 desc:"les meilleurs sushis du coin, manger des pièces une par une ça oblige à se parler entre chaque",           addr:"Centre Dijon" },
+    { icon:"🏮", name:"Akatsuki",               desc:"les plats arrivent au centre de la table, bonne excuse pour se pencher un peu",                 addr:"Rue Bossuet" },
+    { icon:"🎡", name:"Osaka",                  desc:"à volonté, on peut rester deux heures sans s'en rendre compte",                     addr:"13 rue Musette" },
+  ],
+  "Bar": [
+    { icon:"🍹", name:"Monsieur Moutarde",      desc:"les cocktails sont créatifs, la conversation aussi", addr:"Centre Dijon" },
+    { icon:"☠️", name:"Le Barberousse",         desc:"ambiance pirate, lumières tamisées, au pire on parle de Barbe-Rouge toute la soirée",  addr:"7 Place du Théâtre" },
+    { icon:"🌴", name:"Casa del Mojito",        desc:"les mojitos sont dangereux ici, dans le bon sens du terme",    addr:"51 rue Parmentier — ouvert jusqu'à 2h" },
+  ],
+  "Restaurant": [
+    { icon:"🍺", name:"Le Pub Corrigan",        desc:"brasserie irlandaise, ambiance chaleureuse, idéal pour une première soirée décontractée",         addr:"Centre Dijon" },
+    { icon:"🥩", name:"La Brasserie Zola",      desc:"brasserie classique dijonnaise, plats généreux, on s'y sent bien sans chichi",                   addr:"Rue Zola" },
+    { icon:"🌿", name:"Le Château Bourgogne",   desc:"cadre sympa, carte variée, le genre d'endroit où on reste deux heures sans voir le temps passer", addr:"Centre Dijon" },
+  ],
+
+  "Pique-nique": [
+    { icon:"🌸", name:"Jardin Darcy",           desc:"les fontaines en fond sonore, le centre-ville à deux pas, ça change une simple balade",       addr:"À côté de la gare SNCF" },
+    { icon:"🌿", name:"Jardin de l'Arquebuse",  desc:"jardin botanique calme, idéal pour parler sans avoir à aller quelque part",             addr:"1 av. Albert Ier" },
+    { icon:"💧", name:"Lac Kir",                desc:"une heure à marcher au bord du lac et on se connaît déjà mieux que la plupart des gens",       addr:"Au bout de la coulée verte" },
+  ],
+};
+
+const FILMS = [
+  { emoji:"👗", title:"Le Diable s'habille en Prada 2", genre:"Comédie / Drame", note:"20 ans après, si t'as pas vu le premier on le regarde ensemble avant" },
+  { emoji:"⭐", title:"Star Wars: The Mandalorian and Grogu", genre:"Action / Aventure", note:"Grogu est mignon, elle va craquer sur lui ou sur toi, dans tous les cas c'est bon" },
+  { emoji:"🕺", title:"Michael", genre:"Biopic", note:"2h30 de MJ en grande salle, vous ressortez avec la même chanson dans la tête tous les deux" },
+];
+
+
+// Pétales
+const PETALS = ["🌸","🩷","💗","🌸","🩷","🌸","🩷","💗"];
+for (let i = 0; i < 32; i++) {
+  const el = document.createElement("span"); el.className = "petal";
+  el.textContent = PETALS[i % PETALS.length];
+  el.style.cssText = `left:${Math.random()*100}%;font-size:${11+Math.random()*14}px;animation-duration:${9+Math.random()*9}s;animation-delay:${-(Math.random()*14)}s;`;
+  document.body.appendChild(el);
+}
+
+let step = 0, noCount = 0, selDate = "", selTime = "", selFood = "";
+
+const foods = [
+  ["🇮🇹","Italien"], ["🍣","Sushi"],      ["🍸","Bar"],
+  ["🍽️","Restaurant"], ["🎬","Ciné"],      ["🧺","Pique-nique"]
+];
+
+const times = [
+  ["17:00","17h",  "on dîne avec les retraités 👴"],
+  ["18:00","18h",  "on aura le temps de prendre l'apéro 😌"],
+  ["19:00","19h",  "simple mais efficace 🙂‍↕️"],
+  ["20:00","20h",  "là je commence à avoir faim 🫣"],
+  ["21:00","21h",  "bon à ce niveau on se met juste une cuite 😋"],
+  ["22:00","22h",  "ça commence à faire tard cette histoire 🤨"],
+  ["23:00","23h",  "bon y a pas de doute là tu veux me racketter 😰"],
+];
+
+const noTexts = [
+  "non... 🙈","jamais 🙅","nope 💀","même pas 😐",
+  "laisse tomber 🤔","oublie ça 😶","ça va pas 😤",
+  "t'es sérieux là 😒","argh 😩","pourquoi tu fais ça 😭",
+  "pitié 🫣","j'abandonne pas 💪","t'es cruelle 😢",
+  "s'il te plaît 🥺","une dernière fois..."
+];
+
+function render() {
+  const oldNo = document.getElementById("btn-no");
+  if (oldNo) oldNo.remove();
+  const app = document.getElementById("app"); app.innerHTML = "";
+  const card = document.createElement("div"); card.className = "card";
+
+  if      (step===0 && noCount<15)  renderAsk(card);
+  else if (step===0 && noCount>=15) renderSad(card);
+  else if (step===1) renderYes(card);
+  else if (step===2) renderWhen(card);
+  else if (step===3) renderFood(card);
+  else if (step===4) renderFinal(card);
+
+  app.appendChild(card);
+}
+
+function renderAsk(card) {
+  if (SA_PHOTO) {
+    const img = document.createElement("img"); img.src = SA_PHOTO;
+    img.style.cssText = "width:100px;height:100px;border-radius:20px;object-fit:cover;margin:0 auto 18px;display:block;box-shadow:0 6px 20px rgba(220,100,140,.15);";
+    card.appendChild(img);
+  } else {
+    const m = document.createElement("img");
+    m.src = "./mascotte.gif";
+    m.style.cssText = "width:110px;height:110px;border-radius:20px;object-fit:cover;margin:0 auto 18px;display:block;";
+    card.appendChild(m);
+  }
+  const h = document.createElement("h1"); h.textContent = "🌸 On se fait un date ? 🌸"; card.appendChild(h);
+
+  const row = document.createElement("div"); row.className = "ask-row";
+  const yes = document.createElement("button"); yes.className="btn-yes"; yes.textContent="OUI 💕";
+  yes.onclick = () => { step=1; render(); };
+  row.appendChild(yes);
+  const ph = document.createElement("div"); ph.className="no-placeholder"; row.appendChild(ph);
+  card.appendChild(row); card.appendChild(dots(0));
+
+  const no = document.createElement("button"); no.id="btn-no";
+  no.textContent = noCount < noTexts.length ? noTexts[noCount] : "...";
+  document.body.appendChild(no);
+  requestAnimationFrame(() => {
+    const r = ph.getBoundingClientRect();
+    no.style.left = r.left + "px";
+    no.style.top  = (r.top + r.height/2 - no.offsetHeight/2) + "px";
+  });
+  function escape(e) {
+    if (e) e.preventDefault();
+    noCount++;
+    if (noCount>=15) { render(); return; }
+    no.textContent = noTexts[noCount] || "...";
+    const m=16, nw=no.offsetWidth||110, nh=no.offsetHeight||46;
+    no.style.left = (m+Math.random()*(window.innerWidth -nw-m*2))+"px";
+    no.style.top  = (m+Math.random()*(window.innerHeight-nh-m*2))+"px";
+  }
+  no.addEventListener("mouseenter", escape);
+  no.addEventListener("touchstart", escape, {passive:false});
+  no.addEventListener("click", escape);
+}
+
+function renderSad(card) {
+  const m = document.createElement("span"); m.className="sad-emoji"; m.textContent="💔"; card.appendChild(m);
+  const h = document.createElement("h1"); h.textContent="okay... j'ai compris 💔"; card.appendChild(h);
+  const s = document.createElement("p"); s.className="sub";
+  s.innerHTML="si jamais tu changes d'avis<br>le bouton OUI sera toujours là 🥺"; card.appendChild(s);
+  const btn = document.createElement("button"); btn.className="btn-yes-small";
+  btn.textContent="attends… en fait oui 🥹";
+  btn.onclick = () => { step=1; render(); }; card.appendChild(btn);
+}
+
+function renderYes(card) {
+  const m = document.createElement("span"); m.className="mascot"; m.style.animationDuration="1.1s"; m.textContent="🤯"; card.appendChild(m);
+  const h = document.createElement("h1"); h.style.textTransform="uppercase"; h.textContent="ATTENDS T'AS VRAIMENT DIT OUI ?? 😭"; card.appendChild(h);
+  const s = document.createElement("p"); s.className="sub"; s.textContent="j'étais trop sûr que tu allais dire non lol 🫣"; card.appendChild(s);
+  const btn = document.createElement("button"); btn.className="btn-main"; btn.textContent="okay okay →";
+  btn.onclick = () => { step=2; render(); }; card.appendChild(btn);
+  card.appendChild(dots(1));
+  card.appendChild(backBtn(0));
+}
+
+function renderWhen(card) {
+  const ico = document.createElement("img");
+  ico.src = "./when-gif.gif";
+  ico.style.cssText = "width:110px;height:110px;border-radius:20px;object-fit:cover;margin:0 auto 14px;display:block;";
+  card.appendChild(ico);
+  const h = document.createElement("h1"); h.textContent="Alors... t'es dispo quand ?"; card.appendChild(h);
+  const form = document.createElement("div"); form.className="form-area";
+
+  const fd = document.createElement("div"); fd.className="field";
+  const ld = document.createElement("label"); ld.textContent="Un jour 🗓️";
+  const id = document.createElement("input"); id.type="date"; id.value=selDate;
+  // Set min to today
+  const today = new Date().toISOString().split("T")[0];
+  id.min = today;
+  id.style.colorScheme = "light";
+  id.oninput = e => { selDate=e.target.value; btn.disabled=!selDate||!selTime; };
+  fd.appendChild(ld); fd.appendChild(id); form.appendChild(fd);
+
+  const ft = document.createElement("div"); ft.className="field";
+  const lt = document.createElement("label"); lt.textContent="À quelle heure ? ⏰";
+  const st = document.createElement("select");
+  const opt0 = document.createElement("option"); opt0.value=""; opt0.textContent="choisir..."; st.appendChild(opt0);
+  times.forEach(([v,label,funny]) => {
+    const o = document.createElement("option"); o.value=v; o.textContent=`${label} — ${funny}`;
+    if (v===selTime) o.selected=true; st.appendChild(o);
+  });
+  st.onchange = e => { selTime=e.target.value; btn.disabled=!selDate||!selTime; };
+  ft.appendChild(lt); ft.appendChild(st); form.appendChild(ft);
+  card.appendChild(form);
+
+  const btn = document.createElement("button"); btn.className="btn-main"; btn.textContent="on se cale ça ♥";
+  btn.disabled=!selDate||!selTime;
+  btn.onclick = () => { step=3; render(); }; card.appendChild(btn);
+  card.appendChild(dots(2));
+  card.appendChild(backBtn(1));
+}
+
+function renderFood(card) {
+  const ico = document.createElement("span"); ico.style.cssText="font-size:50px;display:block;margin-bottom:12px;"; ico.textContent="🍱✨"; card.appendChild(ico);
+  const h = document.createElement("h1"); h.textContent="On fait quoi ?"; card.appendChild(h);
+  const s = document.createElement("p"); s.className="sub"; s.textContent="réfléchis bien."; card.appendChild(s);
+
+  const grid = document.createElement("div"); grid.className="food-grid";
+  let btn;
+  foods.forEach(([emoji,label]) => {
+    const item = document.createElement("div");
+    item.className = "food-item"+(selFood===label?" selected":"");
+    const e = document.createElement("span"); e.textContent=emoji;
+    const l = document.createElement("span"); l.textContent=label;
+    item.appendChild(e); item.appendChild(l);
+    item.onclick = () => {
+      selFood=label;
+      grid.querySelectorAll(".food-item").forEach(i=>i.classList.remove("selected"));
+      item.classList.add("selected");
+      if (btn) btn.disabled=false;
+    };
+    grid.appendChild(item);
+  });
+  card.appendChild(grid);
+
+  btn = document.createElement("button"); btn.className="btn-main"; btn.textContent="allons-y ! 🚀";
+  btn.disabled=!selFood;
+  btn.onclick = () => { step=4; render(); }; card.appendChild(btn);
+  card.appendChild(dots(3));
+  card.appendChild(backBtn(2));
+}
+
+function renderFinal(card) {
+  const av = document.createElement("div"); av.className="avatar"; av.textContent="😏"; card.appendChild(av);
+
+  const timeLabel = (times.find(t=>t[0]===selTime)||[])[1] || selTime;
+
+  const isBar = selFood === "Bar";
+  const isNight = ["21:00","22:00","23:00","00:00"].includes(selTime);
+
+  const main = document.createElement("p"); main.className="final-main";
+  main.textContent = `Trop content que t'aies pas dit non. On se retrouve à ${timeLabel} à l'endroit de ton choix 📍`;
+  card.appendChild(main);
+
+  if (selFood) {
+    const ff = document.createElement("p"); ff.className="final-food";
+    if (selFood==="Pique-nique")    ff.textContent = "on fait un pique-nique et c'est réglé 🧺😤";
+    else if (selFood==="Bar")       ff.textContent = isNight ? "on va prendre un verre et on verra où ça mène 🍹😏" : "on commence par un verre, see where the night goes 🍹";
+    else if (selFood==="Restaurant")    ff.textContent = "un bon resto, on verra ce que la soirée donne 🍽️";
+    else if (selFood==="Ciné")         ff.textContent = "on se choisit un film, toi tu choisis moi j'assume 🎬";
+    else if (selFood==="Italien")      ff.textContent = "on mange italien, discussion fermée 🇮🇹";
+    else                            ff.textContent = `on mange ${selFood} et c'est réglé 😤`;
+    card.appendChild(ff);
+  }
+
+
+
+
+
+  // ── Ticket ──
+  const ticket = document.createElement("div"); ticket.className = "ticket";
+
+  const th = document.createElement("div"); th.className = "ticket-header";
+  const thSpan = document.createElement("span"); thSpan.textContent = "🎟️  Billet de date  🎟️";
+  th.appendChild(thSpan); ticket.appendChild(th);
+
+  const tb = document.createElement("div"); tb.className = "ticket-body";
+
+  function ticketRow(label, value) {
+    const row = document.createElement("div"); row.className = "ticket-row";
+    const l = document.createElement("span"); l.className = "ticket-label"; l.textContent = label;
+    const v = document.createElement("span"); v.className = "ticket-value"; v.textContent = value;
+    row.appendChild(l); row.appendChild(v); return row;
+  }
+
+  const benefName = SON_PRENOM || "?";
+  const dateLabel = selDate ? new Date(selDate + "T12:00:00").toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long", year:"numeric"}) : "à définir";
+  const actLabel  = selFood || "—";
+
+  tb.appendChild(ticketRow("Bénéficiaire", benefName));
+  tb.appendChild(ticketRow("Avec", TON_PRENOM || "Baptiste Perrot"));
+
+  const div1 = document.createElement("hr"); div1.className = "ticket-divider"; tb.appendChild(div1);
+
+  tb.appendChild(ticketRow("Date", dateLabel));
+  tb.appendChild(ticketRow("Heure", timeLabel));
+  tb.appendChild(ticketRow("Activité", actLabel));
+
+  ticket.appendChild(tb);
+
+  const tf = document.createElement("div"); tf.className = "ticket-footer";
+  tf.textContent = "Merci de m'envoyer ce ticket pour vérification 🩷";
+  ticket.appendChild(tf);
+
+  card.appendChild(ticket);
+
+
+
+  // Bouton SMS avec tout le contenu
+  const smsBtn = document.createElement("button"); smsBtn.className = "btn-sms";
+  smsBtn.innerHTML = "💬 envoyer le ticket au 07 81 56 25 32";
+  smsBtn.onclick = () => {
+    const activityLine = selFood === "Pique-nique" ? "Activité : Pique-nique 🧺"
+      : selFood === "Bar"        ? "Activité : Bar 🍸"
+      : selFood === "Ciné"       ? "Activité : Ciné 🎬"
+      : selFood === "Italien"    ? "Activité : Restaurant italien 🇮🇹"
+      : selFood === "Restaurant" ? "Activité : Restaurant 🍽️"
+      : selFood === "Sushi"      ? "Activité : Sushi 🍣"
+      : "Activité : " + selFood;
+
+    const dateLabel = selDate
+      ? new Date(selDate + "T12:00:00").toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long", year:"numeric"})
+      : "date à définir";
+
+    const msg =
+      "🎟️ BILLET DE DATE 🎟️\n" +
+      "━━━━━━━━━━━━━━━━━━\n" +
+      "Bénéficiaire : " + (SON_PRENOM || "?") + "\n" +
+      "Avec : " + (TON_PRENOM || "Baptiste Perrot") + "\n" +
+      "─────────────────\n" +
+      "Date : " + dateLabel + "\n" +
+      "Heure : " + timeLabel + "\n" +
+      activityLine + "\n" +
+      "━━━━━━━━━━━━━━━━━━";
+
+    window.open("sms:0781562532?body=" + encodeURIComponent(msg), "_self");
+  };
+  card.appendChild(smsBtn);
+
+  card.appendChild(backBtn(3));
+
+  const ps = document.createElement("p"); ps.className="final-ps";
+  ps.textContent = "P.S. les gens normaux envoient un message avec ça va mal écrit. Moi j'ai codé un site pendant ma pause midi. t'as vu le niveau 💅";
+  card.appendChild(ps);
+
+
+
+  const h = document.createElement("div"); h.className="hearts"; h.textContent="🩷 🩷 🩷"; card.appendChild(h);
+}
+
+
+function backBtn(targetStep) {
+  const btn = document.createElement("button");
+  btn.className = "btn-back";
+  btn.textContent = "← retour";
+  btn.onclick = () => { step = targetStep; render(); };
+  return btn;
+}
+
+function dots(active) {
+  const div = document.createElement("div"); div.className="dots";
+  for (let i=0;i<4;i++) {
+    const d = document.createElement("div"); d.className="dot"+(i===active?" on":""); div.appendChild(d);
+  }
+  return div;
+}
+
+render();
+</script>
+</body>
+</html>
